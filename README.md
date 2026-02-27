@@ -10,7 +10,13 @@ This repository is CCP-only (no RLM comparison code).
 
 ## Repository Layout
 
-- `ccp/pipeline.py`: `CCPPipeline` module and CCP runtime logic.
+- `ccp/module.py`: `CCPPipeline` DSPy module.
+- `ccp/signatures.py`: signature definitions (legacy/adaptive).
+- `ccp/judge.py`: LLM-as-judge module.
+- `ccp/io_utils.py`: JSONL and chunking utilities.
+- `ccp/scoring.py`: scoring and evidence parsing helpers.
+- `ccp/runner.py`: CLI runtime logic.
+- `ccp/pipeline.py`: backward-compatible re-export layer.
 - `scripts/run_ccp.py`: CLI wrapper for running CCP.
 - `scripts/prepare_longbench.py`: converts raw LongBench task files into one eval JSONL.
 - `configs/`: example command settings.

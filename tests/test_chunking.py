@@ -5,7 +5,7 @@ import unittest
 
 def _load_module():
     repo_root = pathlib.Path(__file__).resolve().parents[1]
-    module_path = repo_root / "ccp" / "pipeline.py"
+    module_path = repo_root / "ccp" / "io_utils.py"
     spec = importlib.util.spec_from_file_location("run_ccp", module_path)
     assert spec is not None and spec.loader is not None
     mod = importlib.util.module_from_spec(spec)
