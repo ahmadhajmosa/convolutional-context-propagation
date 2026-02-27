@@ -39,6 +39,24 @@ export OPENAI_API_KEY=your_key_here
 
 ## Data Preparation
 
+Download and unpack LongBench:
+
+```bash
+mkdir -p data/benchmarks/longbench
+curl -L -o data/benchmarks/longbench/longbench_data.zip \
+  https://huggingface.co/datasets/THUDM/LongBench/resolve/main/data.zip
+unzip -o data/benchmarks/longbench/longbench_data.zip -d data/benchmarks/longbench
+```
+
+Or with `wget`:
+
+```bash
+mkdir -p data/benchmarks/longbench
+wget -O data/benchmarks/longbench/longbench_data.zip \
+  https://huggingface.co/datasets/THUDM/LongBench/resolve/main/data.zip
+unzip -o data/benchmarks/longbench/longbench_data.zip -d data/benchmarks/longbench
+```
+
 Place LongBench task files under:
 
 `data/benchmarks/longbench/data/*.jsonl`
