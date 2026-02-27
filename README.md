@@ -8,6 +8,44 @@ CCP is a layered long-context reasoning pipeline that:
 
 This repository is CCP-only (no RLM comparison code).
 
+## Method
+
+CCP (Convolutional Context Propagation) processes long context in four stages:
+
+1. **Plan**
+   - A planner predicts task guidance from the query (for example: task type, output format, abstention policy).
+   - This guidance conditions all later steps.
+
+2. **Chunk + Extract**
+   - The context is split into overlapping chunks (`--chunk-chars`, `--chunk-overlap`).
+   - For each chunk, an extractor returns:
+     - a local candidate fragment,
+     - key points/evidence spans,
+     - a relevance/confidence signal.
+   - CCP keeps higher-signal chunk nodes and discards empty/weak ones.
+
+3. **Convolution-Style Fusion Across Layers**
+   - Nodes are fused in sliding windows of size `--window` with movement `--stride`.
+   - This is repeated for `--layers` rounds, progressively abstracting and consolidating information.
+   - Each fusion step outputs a new node (draft answer + fused points + confidence), similar to hierarchical feature aggregation.
+
+4. **Verification**
+   - A verifier checks whether the selected draft answer is valid/supported.
+   - If validation fails, it emits a corrected answer.
+
+### Why this helps on long context
+
+- It avoids forcing one prompt to attend to the full document at once.
+- It localizes evidence first, then propagates only compressed high-value signals upward.
+- It gives explicit control over compute/quality trade-offs:
+  - larger `window` or more `layers` => more aggregation capacity and cost,
+  - smaller values => faster, cheaper inference.
+
+### Signature Modes
+
+- `adaptive` (default): task-aware QA signatures for general long-context benchmarks.
+- `legacy`: memo-style/risk-style signatures for backward compatibility.
+
 ## Repository Layout
 
 - `ccp/module.py`: `CPP` DSPy module.
