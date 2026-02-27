@@ -10,7 +10,7 @@ This repository is CCP-only (no RLM comparison code).
 
 ## Repository Layout
 
-- `ccp/module.py`: `CCPPipeline` DSPy module.
+- `ccp/module.py`: `CPP` DSPy module.
 - `ccp/signatures.py`: signature definitions (legacy/adaptive).
 - `ccp/judge.py`: LLM-as-judge module.
 - `ccp/io_utils.py`: JSONL and chunking utilities.

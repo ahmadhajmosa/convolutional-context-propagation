@@ -10,7 +10,7 @@ from .scoring import count_supported_quotes, is_trueish, parse_float_0_to_1
 from .signatures import get_signature_set
 
 
-class CCPPipeline(dspy.Module):
+class CPP(dspy.Module):
     """
     CCP tuned for long-context QA:
       plan query -> extract local answers per chunk -> fuse over layers -> verify.
@@ -519,3 +519,6 @@ class CCPPipeline(dspy.Module):
             cap_trace_json=trace_json,
         )
 
+
+# Backward-compatible alias.
+CCPPipeline = CPP

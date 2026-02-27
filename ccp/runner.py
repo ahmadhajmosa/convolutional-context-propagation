@@ -11,7 +11,7 @@ import dspy
 
 from .io_utils import read_jsonl, write_jsonl
 from .judge import LLMJudge
-from .module import CCPPipeline
+from .module import CPP
 
 
 def parse_args() -> argparse.Namespace:
@@ -130,7 +130,7 @@ def main() -> int:
     if args.cap_signature is not None:
         signature_mode = args.cap_signature
 
-    ccp = CCPPipeline(
+    ccp = CPP(
         layers=args.layers,
         window=args.window,
         stride=args.stride,
@@ -251,4 +251,3 @@ def main() -> int:
         print(f"Saved predictions: {args.save_predictions}")
 
     return 0
-
