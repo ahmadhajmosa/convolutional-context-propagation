@@ -1,5 +1,7 @@
 # Convolutional Context Propagation (CCP)
 
+CCP uses a convolution-like pattern for LLM reasoning: each chunk is converted into a local evidence node, then sliding windows fuse neighboring nodes across layers (`window`, `stride`) to produce progressively more abstract and global answers.
+
 CCP is a layered long-context reasoning pipeline that:
 - chunks long context,
 - extracts local evidence per chunk,
@@ -91,6 +93,62 @@ flowchart TB
 
 - `adaptive` (default): task-aware QA signatures for general long-context benchmarks.
 - `legacy`: memo-style/risk-style signatures for backward compatibility.
+
+## CCP vs DSPy RLM
+
+This repository focuses on CCP, but CCP is designed to be compared against DSPy RLM under matched settings.
+
+### Conceptual Difference
+
+| Aspect | CCP | RLM |
+|---|---|---|
+| Aggregation pattern | Fixed-depth convolution-style fusion over windows | Recursive reasoning / expansion |
+| Main control knobs | `layers`, `window`, `stride`, chunking | recursion depth/branching style |
+| Cost behavior | More predictable from fixed layer/window schedule | Can vary more with recursive branching |
+| Typical strength | Stable local-to-global evidence compression | Flexible recursive decomposition |
+
+### Fair Comparison Protocol
+
+Use the same:
+- dataset split,
+- base model,
+- decoding settings (temperature, max tokens),
+- average token budget per query,
+- judge and scoring method.
+
+Report:
+- quality (task metric or LLM-judge),
+- latency,
+- tokens/query and cost/query,
+- win/tie/loss by sample.
+
+## DSPy Implementation Snippet
+
+```python
+import dspy
+from ccp.module import CPP
+
+lm = dspy.LM("openai/gpt-4o-mini", temperature=0.0)
+dspy.configure(lm=lm)
+
+ccp = CPP(
+    layers=2,
+    window=2,
+    stride=2,
+    signature_mode="adaptive",
+    enable_trace=True,
+)
+
+pred = ccp(
+    context=long_context_text,
+    query=user_query,
+    chunk_chars=4000,
+    chunk_overlap=400,
+)
+
+print(pred.answer)
+print(pred.ccp_trace_json)  # intermediate layer trace
+```
 
 ## Repository Layout
 
