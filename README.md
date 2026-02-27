@@ -1,6 +1,6 @@
 # Convolutional Context Propagation (CCP)
 
-CCP uses a convolution-like pattern for LLM reasoning: each chunk is converted into a local evidence node, then sliding windows fuse neighboring nodes across layers (`window`, `stride`) to produce progressively more abstract and global answers.
+CCP uses a convolution-like pattern for LLM reasoning over large context: each chunk is converted into a local evidence node, then sliding windows fuse neighboring nodes across layers (`window`, `stride`) to produce progressively more abstract and global answers.
 
 CCP is a layered long-context reasoning pipeline that:
 - chunks long context,
