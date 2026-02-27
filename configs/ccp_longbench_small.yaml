@@ -1,0 +1,16 @@
+dataset_jsonl: data/longbench_eval.jsonl
+limit: 20
+model: openai/gpt-4o-mini
+ccp_signature: adaptive
+layers: 2
+window: 2
+stride: 2
+chunk_chars: 4000
+chunk_overlap: 400
+extract_num_threads: 1
+extract_max_errors: 20
+progress_every: 1
+show_progress: true
+save_predictions: artifacts/ccp_longbench_20.jsonl
+save_traces: artifacts/ccp_traces
+

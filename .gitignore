@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+
+# Virtual envs
+venv/
+.venv/
+
+# Secrets / env
+.env
+
+# Outputs
+artifacts/*
+!artifacts/.gitkeep
+
+# Large data (keep docs only)
+data/*.jsonl
+data/benchmarks/
+!data/README.md
+
+# OS
+.DS_Store
+
