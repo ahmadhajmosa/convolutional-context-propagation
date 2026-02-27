@@ -94,6 +94,75 @@ flowchart TB
 - `adaptive` (default): task-aware QA signatures for general long-context benchmarks.
 - `legacy`: memo-style/risk-style signatures for backward compatibility.
 
+### What The DSPy Signatures Contain
+
+CCP is implemented as four DSPy predictors. Each stage has a fixed input/output signature.
+
+`adaptive` signatures:
+
+```python
+plan = dspy.Predict(
+    "query -> task_type, expected_output_format, scoring_focus, abstention_policy"
+)
+
+extract = dspy.Predict(
+    "chunk, query, task_type, expected_output_format, scoring_focus, abstention_policy "
+    "-> relevance_0_to_1, key_points, candidate_fragment, evidence_spans, unresolved"
+)
+
+fuse = dspy.Predict(
+    "window_findings, query, task_type, expected_output_format, scoring_focus, abstention_policy "
+    "-> fused_points, draft_answer, confidence_0_to_1, unresolved"
+)
+
+verify = dspy.Predict(
+    "query, task_type, expected_output_format, draft_answer, fused_points, unresolved "
+    "-> is_valid, corrected_answer, verifier_notes"
+)
+```
+
+What these fields do:
+- `task_type`: coarse task label such as open QA, summarization, retrieval, classification.
+- `expected_output_format`: constrains answer shape (short answer, list, paragraph, etc.).
+- `scoring_focus`: tells downstream stages what to prioritize, usually faithfulness first.
+- `abstention_policy`: tells the model how to behave when support is weak.
+- `relevance_0_to_1`: local chunk usefulness score.
+- `key_points`: distilled facts extracted from a chunk.
+- `candidate_fragment`: chunk-local answer fragment.
+- `evidence_spans`: quoted or anchored support used for validation.
+- `unresolved`: missing information or uncertainty to carry upward.
+- `fused_points`: merged evidence from multiple nodes.
+- `draft_answer`: current best answer after fusion.
+- `confidence_0_to_1`: fused node confidence score.
+- `is_valid`: verifier judgment on whether the draft answer is supported.
+- `corrected_answer`: verifier fallback if the draft answer is weak or incorrect.
+- `verifier_notes`: explanation of the verifier decision.
+
+`legacy` signatures:
+
+```python
+plan = dspy.Predict(
+    "query -> answer_type, extraction_focus, abstention_rule"
+)
+
+extract = dspy.Predict(
+    "chunk, query, answer_type, extraction_focus, abstention_rule "
+    "-> evidence_found, quoted_evidence, atomic_facts, local_answer, confidence, missing_info"
+)
+
+fuse = dspy.Predict(
+    "window_findings, query, answer_type, extraction_focus, abstention_rule "
+    "-> fused_answer, fused_evidence, confidence, unresolved_points"
+)
+
+verify = dspy.Predict(
+    "query, candidate_answer, fused_evidence, unresolved_points "
+    "-> is_supported, corrected_answer, verifier_notes"
+)
+```
+
+Use `adaptive` for general long-context QA benchmarks. Use `legacy` only when you want the older memo-style extraction behavior.
+
 ## CCP vs DSPy RLM
 
 This repository focuses on CCP, but CCP is designed to be compared against DSPy RLM under matched settings.
