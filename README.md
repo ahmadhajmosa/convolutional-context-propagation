@@ -150,6 +150,36 @@ print(pred.answer)
 print(pred.ccp_trace_json)  # intermediate layer trace
 ```
 
+### Example: Module Configuration
+
+```python
+from ccp.module import CPP
+
+ccp = CPP(
+    layers=3,               # number of abstraction rounds
+    window=3,               # how many neighboring nodes each fuse step sees
+    stride=1,               # how far the fusion window moves each step
+    signature_mode="adaptive",
+    enable_trace=True,      # emit intermediate layer outputs
+    extract_num_threads=4,  # parallel chunk extraction
+    extract_max_errors=10,  # stop if too many chunk calls fail
+)
+
+pred = ccp(
+    context=long_context_text,
+    query=user_query,
+    chunk_chars=3000,       # chunk size before fusion
+    chunk_overlap=300,      # overlap between adjacent chunks
+)
+```
+
+Parameter effect:
+- `layers`: more layers increase abstraction depth and cost.
+- `window`: larger windows combine more local evidence per fusion step.
+- `stride`: smaller stride increases overlap between fusion windows.
+- `chunk_chars`: larger chunks preserve more local context, but cost more per extract call.
+- `chunk_overlap`: helps preserve facts that cross chunk boundaries.
+
 ## Repository Layout
 
 - `ccp/module.py`: `CPP` DSPy module.
