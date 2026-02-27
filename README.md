@@ -33,6 +33,52 @@ CCP (Convolutional Context Propagation) processes long context in four stages:
    - A verifier checks whether the selected draft answer is valid/supported.
    - If validation fails, it emits a corrected answer.
 
+### Convolution + Abstraction Graph
+
+```mermaid
+flowchart TB
+  Q["Query"] --> P["Plan: task type, output format, abstention"]
+  C["Long Context"] --> S["Chunk + Extract"]
+  P --> S
+
+  subgraph L0["Layer 0 (chunk nodes)"]
+    N1["n1"] --- N2["n2"] --- N3["n3"] --- N4["n4"] --- N5["n5"]
+  end
+
+  S --> L0
+
+  subgraph L1["Layer 1 (window fuse; window=w, stride=s)"]
+    F1["f1 = fuse(n1..nw)"]
+    F2["f2 = fuse(n1+s..nw+s)"]
+    F3["f3 = ..."]
+  end
+
+  N1 --> F1
+  N2 --> F1
+  N3 --> F1
+  N2 --> F2
+  N3 --> F2
+  N4 --> F2
+  N5 --> F3
+
+  subgraph L2["Layer 2 (higher abstraction)"]
+    G1["g1 = fuse(f1..fk)"]
+    G2["g2 = ..."]
+  end
+
+  F1 --> G1
+  F2 --> G1
+  F3 --> G2
+
+  TOP["Top Node (best draft answer + fused evidence)"]
+  V["Verify / Correct"]
+  OUT["Final Answer"]
+
+  G1 --> TOP
+  G2 --> TOP
+  TOP --> V --> OUT
+```
+
 ### Why this helps on long context
 
 - It avoids forcing one prompt to attend to the full document at once.
